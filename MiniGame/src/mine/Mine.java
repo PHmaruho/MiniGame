@@ -391,6 +391,7 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 							if(arrMine[i][j] == 0) { // 0일 경우
 								btnMine[i][j].setText("");
 								btnMine[i][j].setEnabled(false);
+								
 								// 폭탄이 아닌 버튼을 눌렀을 때, 주변에 빈공간이 있으면 확산한다.
 //								spreadNull(i, j, arrMine, btnMine);
 								
@@ -461,9 +462,56 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 					
 					tempI += 1;
 					tempJ += 1;
-				}
+				} // while End
+			} // j==0
+			
+			else if(j==WIDTH_LENGTH-1) {
+				while(true) { // 왼쪽 아래 대각선 검사
+					if((arrMine[tempI][tempJ-1] != 0) 
+							&& (arrMine[tempI+1][tempJ] != 0)
+							&& (arrMine[tempI+1][tempJ-1] != 0)) {
+						btnMine[tempI][tempJ-1].setText(arrMine[tempI][tempJ-1]+"");
+						btnMine[tempI+1][tempJ].setText(arrMine[tempI+1][tempJ]+"");
+						btnMine[tempI-1][tempJ-1].setText(arrMine[tempI-1][tempJ-1]+"");
+						btnMine[tempI][tempJ-1].setEnabled(false);
+						btnMine[tempI+1][tempJ].setEnabled(false);
+						btnMine[tempI-1][tempJ-1].setEnabled(false);
+						break;
+					} else {
+						for (int x = 1; x < WIDTH_LENGTH+1; x++) {
+							if(arrMine[tempI][tempJ+1] != 0 && arrMine[tempI+x][tempJ] == 0 ) {
+								btnMine[tempI+x][tempJ].setText("");
+								btnMine[tempI+x][tempJ].setEnabled(false);
+							} else {
+								btnMine[tempI+x][tempJ].setText(arrMine[tempI+x][tempJ] + "");
+								btnMine[tempI+x][tempJ].setEnabled(false);
+								break;
+							}
+						}
+						for (int y = 0; y < HEIGHT_LENGTH+1; y++) {
+							if(arrMine[tempI+1][tempJ] != 0 && arrMine[tempI][tempJ+y] == 0 ) {
+								btnMine[tempI][tempJ+y].setText("");
+								btnMine[tempI][tempJ+y].setEnabled(false);
+							} else {
+								btnMine[tempI][tempJ+y].setText(arrMine[tempI][tempJ+y] + "");
+								btnMine[tempI][tempJ+y].setEnabled(false);
+								break;
+							}
+						}
+						if((arrMine[tempI][tempJ+1] != 0) && (arrMine[tempI+1][tempJ] != 0)) {
+							btnMine[tempI][tempJ+1].setText(arrMine[tempI][tempJ+1] + "");
+							btnMine[tempI][tempJ+1].setEnabled(false);
+							btnMine[tempI+1][tempJ].setText(arrMine[tempI+1][tempJ] + "");
+							btnMine[tempI+1][tempJ].setEnabled(false);
+							break;
+						}
+					}
+					
+					tempI += 1;
+					tempJ += 1;
+				} // while End
 			}
-		}
+		} // i==0
 	}
 
 	public class ThreadTimers implements Runnable {
