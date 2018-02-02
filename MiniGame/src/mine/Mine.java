@@ -3,11 +3,13 @@ package mine;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -123,28 +125,33 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 	// minePanel
 	public class Pmine extends JPanel implements StaticLength {
 
-		private JButton[][] btnMine = new JButton[WIDTH_LENGTH][HEIGHT_LENGTH];
-		private int[][] arrMine = new int[WIDTH_LENGTH][HEIGHT_LENGTH];
+		private JButton[][] btnMine 
+				= new JButton[SETTING_WIDTH_LENGTH][SETTING_HEIGHT_LENGTH];
+		private int[][] arrMine 
+				= new int[SETTING_WIDTH_LENGTH][SETTING_HEIGHT_LENGTH];
 
 		public Pmine() {
 			setBounds(0, 0, 800, 800);
-			setLayout(new GridLayout(WIDTH_LENGTH, HEIGHT_LENGTH));
+			setLayout(new GridLayout(SETTING_WIDTH_LENGTH, SETTING_HEIGHT_LENGTH));
 
 			btnMineAction btnAction = new btnMineAction();
 			MouseAction mouseAction = new MouseAction();
 			btnAction.getArr(arrMine, btnMine);
-			for (int i = 0; i < WIDTH_LENGTH; i++) {
-				for (int j = 0; j < HEIGHT_LENGTH; j++) {
+			for (int i = 0; i < SETTING_WIDTH_LENGTH; i++) {
+				for (int j = 0; j < SETTING_HEIGHT_LENGTH; j++) {
 					btnMine[i][j] = new JButton("");
 					btnMine[i][j].setToolTipText("");
 
-					btnMine[i][j].addActionListener(btnAction);
-					btnMine[i][j].addMouseListener(mouseAction);
-
-					add(btnMine[i][j]);
-
-					// mineSetting
-					arrMine[i][j] = 0;
+					if(i==0 || i==SETTING_WIDTH_LENGTH-1 || j==0 || j==SETTING_HEIGHT_LENGTH) {
+						continue;
+					} else {
+						btnMine[i][j].addActionListener(btnAction);
+						btnMine[i][j].addMouseListener(mouseAction);
+						add(btnMine[i][j]);
+						
+						// mineSetting
+						arrMine[i][j] = 0;
+					}
 				}
 			}
 
@@ -174,23 +181,21 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 
 			int random = 0;
 			int totalCounter = 0;
-			int maxMine = (int) Math.round((WIDTH_LENGTH * HEIGHT_LENGTH) / 5.0);
-			int selectRandMine = (int) (Math.random() * maxMine);
+			int selectRandMine = (int) (Math.random() * MAX_MINE);
 
 			while (breaking) {
-				for (int i = 0; i < WIDTH_LENGTH; i++) {
-					for (int j = 0; j < HEIGHT_LENGTH; j++) {
-						if (totalCounter == maxMine) {
+				for (int i = MINUS_WIDTH; i <= WIDTH_LENGTH; i++) {
+					for (int j = MINUS_HEIGHT; j <= HEIGHT_LENGTH; j++) {
+						if (totalCounter == MAX_MINE) {
 							breaking = false;
 							break;
 						} else {
-							random = (int) (Math.random() * maxMine);
+							random = (int) (Math.random() * MAX_MINE);
 							if (btnMine[i][j].getToolTipText().equals("*")) {
 								continue;
 							} else {
 								if (selectRandMine == random) {
 									btnMine[i][j].setToolTipText("*");
-//									arrMine[i][j] = 1;
 									totalCounter++;
 								}
 							}
@@ -199,157 +204,21 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 				}
 			} // while end
 			
-			/*
-			 * test
-			 */
-			for (int i = 0; i < WIDTH_LENGTH; i++) {
-				for (int j = 0; j < HEIGHT_LENGTH; j++) {
-					if(!btnMine[i][j].getToolTipText().equals("*")) {
-						System.out.print("^");
-					} else {
-						System.out.print(btnMine[i][j].getToolTipText());
-					}
+			for (int i = 0; i < SETTING_WIDTH_LENGTH; i++) {
+				for (int j = 0; j < SETTING_HEIGHT_LENGTH; j++) {
+					
 				}
 				System.out.println("");
 			}
-			
-			System.out.println("");
 			
 			mineAroundNum();
-			
-			for (int i = 0; i < WIDTH_LENGTH; i++) {
-				for (int j = 0; j < HEIGHT_LENGTH; j++) {
-					if(!btnMine[i][j].getToolTipText().equals("*")) {
-						btnMine[i][j].setText(""+arrMine[i][j]);
-					} else {
-						btnMine[i][j].setText("*");
-						btnMine[i][j].setFont(new Font("Arial", Font.PLAIN, 40));
-					}
-				}
-				System.out.println("");
-			}
-			/*
-			 * test
-			 */
 		}
 
 		// 지뢰 주변에 숫자표시해주는 logic
 		public void mineAroundNum() {
-			for (int i = 0; i < WIDTH_LENGTH; i++) {
-				for (int j = 0; j < HEIGHT_LENGTH; j++) {
+			for (int i = 0; i < SETTING_WIDTH_LENGTH; i++) {
+				for (int j = 0; j < SETTING_HEIGHT_LENGTH; j++) {
 					if(btnMine[i][j].getToolTipText().equals("*")) {
-						// i==0
-						if (i == 0) {
-
-							// [0,0]
-							if (j == 0) {
-								for (int x = 0; x < 2; x++) {
-									for (int y = 0; y < 2; y++) {
-										if (btnMine[i + x][j + y].getToolTipText().equals("*")) {
-											continue;
-										} else {
-											arrMine[i + x][j + y]++;
-										}
-									}
-								}
-							}
-
-							// [0,10]
-							else if (j == HEIGHT_LENGTH - 1) {
-								for (int x = 0; x < 2; x++) {
-									for (int y = -1; y < 1; y++) {
-										if (btnMine[i + x][j + y].getToolTipText().equals("*")) {
-											continue;
-										} else {
-											arrMine[i + x][j + y]++;
-										}
-									}
-								}
-							}
-
-							// [0, 1] ~ [0, 9]
-							else {
-								for (int x = 0; x < 2; x++) {
-									for (int y = -1; y < 2; y++) {
-										if (btnMine[i + x][j + y].getToolTipText().equals("*")) {
-											continue;
-										} else {
-											arrMine[i + x][j + y]++;
-										}
-									}
-								}
-							} // j==0 or j=10 or else....
-						} // if(i==0)
-
-						// i == 10
-						else if (i == WIDTH_LENGTH - 1) {
-							// [10,0]
-							if (j == 0) {
-
-								for (int x = -1; x < 1; x++) {
-									for (int y = 0; y < 2; y++) {
-										if (btnMine[i + x][j + y].getToolTipText().equals("*")) {
-											continue;
-										} else {
-											arrMine[i + x][j + y]++;
-										}
-									}
-								}
-							}
-
-							// [10,10]
-							else if (j == HEIGHT_LENGTH - 1) {
-								for (int x = -1; x < 1; x++) {
-									for (int y = -1; y < 1; y++) {
-										if (btnMine[i + x][j + y].getToolTipText().equals("*")) {
-											continue;
-										} else {
-											arrMine[i + x][j + y]++;
-										}
-									}
-								}
-							}
-
-							// [10, 1] ~ [10, 9]
-							else {
-								for (int x = -1; x < 1; x++) {
-									for (int y = -1; y < 2; y++) {
-										if (btnMine[i + x][j + y].getToolTipText().equals("*")) {
-											continue;
-										} else {
-											arrMine[i + x][j + y]++;
-										}
-									}
-								}
-							}
-						} // end (i==0 || i==10)
-
-						// j==0 이면서 중복을 없애기 위해서 i!=0 || i!=10의 조건에 맞는 부분만 찾는다
-						else if (j == 0 && (i != 0 || i != WIDTH_LENGTH)) {
-							for (int x = -1; x < 2; x++) {
-								for (int y = 0; y < 2; y++) {
-									if (btnMine[i + x][j + y].getToolTipText().equals("*")) {
-										continue;
-									} else {
-										arrMine[i + x][j + y]++;
-									}
-								}
-							}
-						}
-
-						// j==10 이면서 중복을 없애기 위해서 i!=0 || i!=10의 조건에 맞는 부분만 찾는다
-						else if (j == HEIGHT_LENGTH - 1 && (i != 0 || i != WIDTH_LENGTH)) {
-							for (int x = -1; x < 2; x++) {
-								for (int y = -1; y < 1; y++) {
-									if (btnMine[i + x][j + y].getToolTipText().equals("*")) {
-										continue;
-									} else {
-										arrMine[i + x][j + y]++;
-									}
-								}
-							}
-						}
-
 						/*
 						 * [-,-,-,-,-]
 						 * [-,#,#,#,-]
@@ -358,26 +227,31 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 						 * [-,-,-,-,-]
 						 * #(shape) 내부를 검사하기위한 로직
 						 */
-						else {
-							for (int x = -1; x < 2; x++) {
-								for (int y = -1; y < 2; y++) {
-									if (btnMine[i + x][j + y].getToolTipText().equals("*")) {
-										continue;
-									} else {
-										arrMine[i + x][j + y]++;
-									}
+						for (int x = -1; x < 2; x++) {
+							for (int y = -1; y < 2; y++) {
+								if (btnMine[i + x][j + y].getToolTipText().equals("*")) {
+									continue;
+								} else {
+									arrMine[i + x][j + y]++;
 								}
 							}
-						} // end if~else
+						}
 					}
-					
-					
-
-				} // for (int j ......end
-			} // for (int i ......end
+				} // for(j) END
+			} // for(i) END
+			
+			for (int i = 0; i < SETTING_WIDTH_LENGTH; i++) {
+				for (int j = 0; j < SETTING_HEIGHT_LENGTH; j++) {
+					if(i==0 || i==SETTING_WIDTH_LENGTH
+							|| j==0 || j==SETTING_HEIGHT_LENGTH) {
+						arrMine[i][j] = 10; // 지뢰 주변엔 9 이상이 찍히지 않는다.
+					}
+				}
+			}
 		}
 	} // SettingMine Class ENd
 
+	
 	// btnAction
 	public class btnMineAction implements ActionListener, StaticLength {
 		private int[][] arrMine;
@@ -386,16 +260,18 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			for (int i = 0; i < WIDTH_LENGTH; i++) {
-				for (int j = 0; j < HEIGHT_LENGTH; j++) {
+			for (int i = MINUS_WIDTH; i <= WIDTH_LENGTH; i++) {
+				for (int j = MINUS_HEIGHT; j <= HEIGHT_LENGTH; j++) {
 					if (e.getSource() == btnMine[i][j]) {
 						if(btnMine[i][j].getToolTipText().equals("*")) {
-							btnMine[i][j].setFont(new Font("Arial", Font.PLAIN, 40));
-							btnMine[i][j].setText("★");
+							btnMine[i][j].setIcon(reSize("img/mine1.png"));
+//							btnMine[i][j].setFont(new Font("Arial", Font.PLAIN, 30));
+//							btnMine[i][j].setText("M");
 						} else if(btnMine[i][j].getToolTipText().length() == 0){
 							
 							if(arrMine[i][j] == 0) { // 0일 경우
-								btnMine[i][j].setText("");
+//								btnMine[i][j].setText("");
+								btnMine[i][j].setText(arrMine[i][j]+"");
 								btnMine[i][j].setEnabled(false);
 								
 								// 폭탄이 아닌 버튼을 눌렀을 때, 주변에 빈공간이 있으면 확산한다.
@@ -403,6 +279,7 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 								
 							} else { // 숫자가 있는 경우
 								btnMine[i][j].setText("" + arrMine[i][j]);
+								btnMine[i][j].setFont(new Font("Arial", Font.PLAIN, 20));
 								btnMine[i][j].setEnabled(false);
 							}
 						}
@@ -428,7 +305,7 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 				
 			} // j==0
 			
-			else if(j==WIDTH_LENGTH-1) {
+			else if(j==SETTING_WIDTH_LENGTH-1) {
 				while(true) { // 왼쪽 아래 대각선 검사
 					if((arrMine[tempI][tempJ-1] != 0) 
 							&& (arrMine[tempI+1][tempJ] != 0)
@@ -441,7 +318,7 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 						btnMine[tempI-1][tempJ-1].setEnabled(false);
 						break;
 					} else {
-						for (int x = 1; x < WIDTH_LENGTH+1; x++) {
+						for (int x = 1; x < SETTING_WIDTH_LENGTH+1; x++) {
 							if(arrMine[tempI][tempJ-1] != 0 && arrMine[tempI+x][tempJ] == 0 ) { // 아래
 								btnMine[tempI+x][tempJ].setText("");
 								btnMine[tempI+x][tempJ].setEnabled(false);
@@ -451,7 +328,7 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 								break;
 							}
 						}
-						for (int y = 1; y < HEIGHT_LENGTH+1; y++) {
+						for (int y = 1; y < SETTING_HEIGHT_LENGTH+1; y++) {
 							if(arrMine[tempI+1][tempJ] != 0 && arrMine[tempI][tempJ+y] == 0 ) {
 								btnMine[tempI][tempJ+y].setText("");
 								btnMine[tempI][tempJ+y].setEnabled(false);
@@ -484,6 +361,15 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 			// TODO Auto-generated method stub
 
 		}
+	}
+	
+	// imageResize
+	public ImageIcon reSize(String filePath) {
+		ImageIcon imageIcon = new ImageIcon(filePath);
+		Image image = imageIcon.getImage();
+		Image reSize = image.getScaledInstance(32, 32, 0);
+		
+		return (new ImageIcon(reSize));
 	}
 
 }
