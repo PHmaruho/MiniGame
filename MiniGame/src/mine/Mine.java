@@ -13,6 +13,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+/*
+ * FIX
+ * 만약에 10x10 이면
+ * 12x12로 만든다
+ */
+
 public class Mine extends JFrame implements StaticLength, ActionListener {
 
 	JPanel pGame, pMenu;
@@ -414,55 +420,12 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 	// 확산하는 method
 	public void spreadNull(int i, int j, int[][] arrMine, JButton[][] btnMine) {
 		int tempI = i, tempJ = j;
+		
 		// i==0
 		if(i==0) {
-			
 			// j==0
 			if(j==0) {
-				while(true) { // 오른쪽 아래 대각선 검사
-					if((arrMine[tempI][tempJ+1] != 0) 
-							&& (arrMine[tempI+1][tempJ] != 0)
-							&& (arrMine[tempI+1][tempJ+1] != 0)) {
-						btnMine[tempI][tempJ+1].setText(arrMine[tempI][tempJ+1]+"");
-						btnMine[tempI+1][tempJ].setText(arrMine[tempI+1][tempJ]+"");
-						btnMine[tempI+1][tempJ+1].setText(arrMine[tempI+1][tempJ+1]+"");
-						btnMine[tempI][tempJ+1].setEnabled(false);
-						btnMine[tempI+1][tempJ].setEnabled(false);
-						btnMine[tempI+1][tempJ+1].setEnabled(false);
-						break;
-					} else {
-						for (int x = 1; x < WIDTH_LENGTH+1; x++) {
-							if(arrMine[tempI][tempJ+1] != 0 && arrMine[tempI+x][tempJ] == 0 ) {
-								btnMine[tempI+x][tempJ].setText("");
-								btnMine[tempI+x][tempJ].setEnabled(false);
-							} else {
-								btnMine[tempI+x][tempJ].setText(arrMine[tempI+x][tempJ] + "");
-								btnMine[tempI+x][tempJ].setEnabled(false);
-								break;
-							}
-						}
-						for (int y = 0; y < HEIGHT_LENGTH+1; y++) {
-							if(arrMine[tempI+1][tempJ] != 0 && arrMine[tempI][tempJ+y] == 0 ) {
-								btnMine[tempI][tempJ+y].setText("");
-								btnMine[tempI][tempJ+y].setEnabled(false);
-							} else {
-								btnMine[tempI][tempJ+y].setText(arrMine[tempI][tempJ+y] + "");
-								btnMine[tempI][tempJ+y].setEnabled(false);
-								break;
-							}
-						}
-						if((arrMine[tempI][tempJ+1] != 0) && (arrMine[tempI+1][tempJ] != 0)) {
-							btnMine[tempI][tempJ+1].setText(arrMine[tempI][tempJ+1] + "");
-							btnMine[tempI][tempJ+1].setEnabled(false);
-							btnMine[tempI+1][tempJ].setText(arrMine[tempI+1][tempJ] + "");
-							btnMine[tempI+1][tempJ].setEnabled(false);
-							break;
-						}
-					}
-					
-					tempI += 1;
-					tempJ += 1;
-				} // while End
+				
 			} // j==0
 			
 			else if(j==WIDTH_LENGTH-1) {
@@ -479,7 +442,7 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 						break;
 					} else {
 						for (int x = 1; x < WIDTH_LENGTH+1; x++) {
-							if(arrMine[tempI][tempJ+1] != 0 && arrMine[tempI+x][tempJ] == 0 ) {
+							if(arrMine[tempI][tempJ-1] != 0 && arrMine[tempI+x][tempJ] == 0 ) { // 아래
 								btnMine[tempI+x][tempJ].setText("");
 								btnMine[tempI+x][tempJ].setEnabled(false);
 							} else {
@@ -488,7 +451,7 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 								break;
 							}
 						}
-						for (int y = 0; y < HEIGHT_LENGTH+1; y++) {
+						for (int y = 1; y < HEIGHT_LENGTH+1; y++) {
 							if(arrMine[tempI+1][tempJ] != 0 && arrMine[tempI][tempJ+y] == 0 ) {
 								btnMine[tempI][tempJ+y].setText("");
 								btnMine[tempI][tempJ+y].setEnabled(false);
