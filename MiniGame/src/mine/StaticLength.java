@@ -5,8 +5,8 @@ public interface StaticLength {
 	 * if 13x13이면
 	 * 15x15로 셋팅한다
 	 */
-	final int SETTING_WIDTH_LENGTH = 15;
-	final int SETTING_HEIGHT_LENGTH = 15;
+	final int SETTING_WIDTH_LENGTH = 9;
+	final int SETTING_HEIGHT_LENGTH = 9;
 	
 	final int MINUS_WIDTH = 1;
 	final int MINUS_HEIGHT = 1;

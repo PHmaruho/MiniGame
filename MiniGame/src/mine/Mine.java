@@ -125,14 +125,12 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 	// minePanel
 	public class Pmine extends JPanel implements StaticLength {
 
-		private JButton[][] btnMine 
-				= new JButton[SETTING_WIDTH_LENGTH][SETTING_HEIGHT_LENGTH];
-		private int[][] arrMine 
-				= new int[SETTING_WIDTH_LENGTH][SETTING_HEIGHT_LENGTH];
+		private JButton[][] btnMine = new JButton[SETTING_WIDTH_LENGTH][SETTING_HEIGHT_LENGTH];
+		private int[][] arrMine = new int[SETTING_WIDTH_LENGTH][SETTING_HEIGHT_LENGTH];
 
 		public Pmine() {
 			setBounds(0, 0, 800, 800);
-			setLayout(new GridLayout(SETTING_WIDTH_LENGTH, SETTING_HEIGHT_LENGTH));
+			setLayout(new GridLayout(WIDTH_LENGTH, HEIGHT_LENGTH));
 
 			btnMineAction btnAction = new btnMineAction();
 			MouseAction mouseAction = new MouseAction();
@@ -142,16 +140,16 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 					btnMine[i][j] = new JButton("");
 					btnMine[i][j].setToolTipText("");
 
-					if(i==0 || i==SETTING_WIDTH_LENGTH-1 || j==0 || j==SETTING_HEIGHT_LENGTH) {
+					if (i == 0 || i == SETTING_WIDTH_LENGTH - 1 || j == 0 || j == SETTING_HEIGHT_LENGTH - 1) {
 						continue;
 					} else {
 						btnMine[i][j].addActionListener(btnAction);
 						btnMine[i][j].addMouseListener(mouseAction);
 						add(btnMine[i][j]);
-						
-						// mineSetting
-						arrMine[i][j] = 0;
 					}
+
+					// mineSetting
+					arrMine[i][j] = 0;
 				}
 			}
 
@@ -167,7 +165,7 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 	public class SettingMine implements StaticLength {
 
 		private Boolean breaking = true;
-		
+
 		private int[][] arrMine;
 		private JButton[][] btnMine;
 
@@ -203,14 +201,7 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 					}
 				}
 			} // while end
-			
-			for (int i = 0; i < SETTING_WIDTH_LENGTH; i++) {
-				for (int j = 0; j < SETTING_HEIGHT_LENGTH; j++) {
-					
-				}
-				System.out.println("");
-			}
-			
+
 			mineAroundNum();
 		}
 
@@ -218,14 +209,10 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 		public void mineAroundNum() {
 			for (int i = 0; i < SETTING_WIDTH_LENGTH; i++) {
 				for (int j = 0; j < SETTING_HEIGHT_LENGTH; j++) {
-					if(btnMine[i][j].getToolTipText().equals("*")) {
+					if (btnMine[i][j].getToolTipText().equals("*")) {
 						/*
-						 * [-,-,-,-,-]
-						 * [-,#,#,#,-]
-						 * [-,#,#,#,-]
-						 * [-,#,#,#,-]
-						 * [-,-,-,-,-]
-						 * #(shape) 내부를 검사하기위한 로직
+						 * [-,-,-,-,-] [-,#,#,#,-] [-,#,#,#,-] [-,#,#,#,-] [-,-,-,-,-] #(shape) 내부를
+						 * 검사하기위한 로직
 						 */
 						for (int x = -1; x < 2; x++) {
 							for (int y = -1; y < 2; y++) {
@@ -239,19 +226,43 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 					}
 				} // for(j) END
 			} // for(i) END
-			
+
 			for (int i = 0; i < SETTING_WIDTH_LENGTH; i++) {
 				for (int j = 0; j < SETTING_HEIGHT_LENGTH; j++) {
-					if(i==0 || i==SETTING_WIDTH_LENGTH
-							|| j==0 || j==SETTING_HEIGHT_LENGTH) {
-						arrMine[i][j] = 10; // 지뢰 주변엔 9 이상이 찍히지 않는다.
+					if (i == 0 || i == SETTING_WIDTH_LENGTH - 1) {
+						arrMine[i][j] = 11; // 지뢰 주변엔 9 이상이 찍히지 않는다.
+					}
+					if (j == 0 || j == SETTING_HEIGHT_LENGTH - 1) {
+						arrMine[i][j] = 11;
 					}
 				}
+			}
+
+			for (int i = 0; i < SETTING_WIDTH_LENGTH; i++) {
+				for (int j = 0; j < SETTING_HEIGHT_LENGTH; j++) {
+
+					if (btnMine[i][j].getToolTipText().equals("*")) {
+						System.out.printf("%3d", 99);
+					} else {
+						System.out.printf("%3d", arrMine[i][j]);
+					}
+				}
+				System.out.println("");
+			}
+			for (int i = 1; i < SETTING_WIDTH_LENGTH - 1; i++) {
+				for (int j = 1; j < SETTING_HEIGHT_LENGTH - 1; j++) {
+
+					if (btnMine[i][j].getToolTipText().equals("*")) {
+						System.out.print(" " + btnMine[i][j].getToolTipText());
+					} else {
+						System.out.print(" -");
+					}
+				}
+				System.out.println("");
 			}
 		}
 	} // SettingMine Class ENd
 
-	
 	// btnAction
 	public class btnMineAction implements ActionListener, StaticLength {
 		private int[][] arrMine;
@@ -260,23 +271,19 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			for (int i = MINUS_WIDTH; i <= WIDTH_LENGTH; i++) {
-				for (int j = MINUS_HEIGHT; j <= HEIGHT_LENGTH; j++) {
+			for (int i = MINUS_WIDTH; i < SETTING_WIDTH_LENGTH - 1; i++) {
+				for (int j = MINUS_HEIGHT; j < SETTING_HEIGHT_LENGTH - 1; j++) {
 					if (e.getSource() == btnMine[i][j]) {
-						if(btnMine[i][j].getToolTipText().equals("*")) {
+						if (btnMine[i][j].getToolTipText().equals("*")) {
 							btnMine[i][j].setIcon(reSize("img/mine1.png"));
-//							btnMine[i][j].setFont(new Font("Arial", Font.PLAIN, 30));
-//							btnMine[i][j].setText("M");
-						} else if(btnMine[i][j].getToolTipText().length() == 0){
-							
-							if(arrMine[i][j] == 0) { // 0일 경우
-//								btnMine[i][j].setText("");
-								btnMine[i][j].setText(arrMine[i][j]+"");
-								btnMine[i][j].setEnabled(false);
-								
+							btnMine[i][j].setEnabled(false);
+						} else if (btnMine[i][j].getToolTipText().length() == 0) {
+
+							if (arrMine[i][j] == 0) { // 0일 경우
+
 								// 폭탄이 아닌 버튼을 눌렀을 때, 주변에 빈공간이 있으면 확산한다.
-//								spreadNull(i, j, arrMine, btnMine);
-								
+								SpreadNull spreadNull = new SpreadNull(i, j, arrMine, btnMine);
+
 							} else { // 숫자가 있는 경우
 								btnMine[i][j].setText("" + arrMine[i][j]);
 								btnMine[i][j].setFont(new Font("Arial", Font.PLAIN, 20));
@@ -293,82 +300,163 @@ public class Mine extends JFrame implements StaticLength, ActionListener {
 			this.btnMine = btnMine;
 		}
 	}
-	
-	// 확산하는 method
-	public void spreadNull(int i, int j, int[][] arrMine, JButton[][] btnMine) {
-		int tempI = i, tempJ = j;
-		
-		// i==0
-		if(i==0) {
-			// j==0
-			if(j==0) {
-				
-			} // j==0
-			
-			else if(j==SETTING_WIDTH_LENGTH-1) {
-				while(true) { // 왼쪽 아래 대각선 검사
-					if((arrMine[tempI][tempJ-1] != 0) 
-							&& (arrMine[tempI+1][tempJ] != 0)
-							&& (arrMine[tempI+1][tempJ-1] != 0)) {
-						btnMine[tempI][tempJ-1].setText(arrMine[tempI][tempJ-1]+"");
-						btnMine[tempI+1][tempJ].setText(arrMine[tempI+1][tempJ]+"");
-						btnMine[tempI-1][tempJ-1].setText(arrMine[tempI-1][tempJ-1]+"");
-						btnMine[tempI][tempJ-1].setEnabled(false);
-						btnMine[tempI+1][tempJ].setEnabled(false);
-						btnMine[tempI-1][tempJ-1].setEnabled(false);
-						break;
-					} else {
-						for (int x = 1; x < SETTING_WIDTH_LENGTH+1; x++) {
-							if(arrMine[tempI][tempJ-1] != 0 && arrMine[tempI+x][tempJ] == 0 ) { // 아래
-								btnMine[tempI+x][tempJ].setText("");
-								btnMine[tempI+x][tempJ].setEnabled(false);
-							} else {
-								btnMine[tempI+x][tempJ].setText(arrMine[tempI+x][tempJ] + "");
-								btnMine[tempI+x][tempJ].setEnabled(false);
-								break;
-							}
-						}
-						for (int y = 1; y < SETTING_HEIGHT_LENGTH+1; y++) {
-							if(arrMine[tempI+1][tempJ] != 0 && arrMine[tempI][tempJ+y] == 0 ) {
-								btnMine[tempI][tempJ+y].setText("");
-								btnMine[tempI][tempJ+y].setEnabled(false);
-							} else {
-								btnMine[tempI][tempJ+y].setText(arrMine[tempI][tempJ+y] + "");
-								btnMine[tempI][tempJ+y].setEnabled(false);
-								break;
-							}
-						}
-						if((arrMine[tempI][tempJ+1] != 0) && (arrMine[tempI+1][tempJ] != 0)) {
-							btnMine[tempI][tempJ+1].setText(arrMine[tempI][tempJ+1] + "");
-							btnMine[tempI][tempJ+1].setEnabled(false);
-							btnMine[tempI+1][tempJ].setText(arrMine[tempI+1][tempJ] + "");
-							btnMine[tempI+1][tempJ].setEnabled(false);
-							break;
-						}
-					}
-					
-					tempI += 1;
-					tempJ += 1;
-				} // while End
+
+	// 확산하는 method - error.....
+	public class SpreadNull implements StaticLength {
+		private int tempI, tempJ;
+		private int[][] arrMine;
+		private JButton[][] btnMine;
+
+		public SpreadNull(int i, int j, int[][] arrMine, JButton[][] btnMine) {
+			this.tempI = i;
+			this.tempJ = j;
+			this.arrMine = arrMine;
+			this.btnMine = btnMine;
+
+			upCheck(tempI, tempJ);
+			downCheck(tempI, tempJ);
+		}
+
+		public void upCheck(int x, int y) {
+			if (x == 0) {
+				return;
 			}
-		} // i==0
-	}
+			for (int tempX = 0; tempX <= x; tempX++) {
+				System.out.println("up");
+				if ((x - tempX) == 0) {
+					break;
+				} else if (arrMine[x - tempX][y] == 0) {
+					btnMine[x - tempX][y].setText("");
+					btnMine[x - tempX][y].setEnabled(false);
+					leftCheck(x - tempX, y - 1);
+					rightCheck(x - tempX, y + 1);
+				} else if (arrMine[x - tempX][y] != 0) {
+					btnMine[x - tempX][y].setText(arrMine[x - tempX][y] + "");
+					btnMine[x - tempX][y].setEnabled(false);
+					if (arrMine[x - tempX][y - 1] != 0) {
+						btnMine[x - tempX][y - 1].setText(arrMine[x - tempX][y - 1] + "");
+						btnMine[x - tempX][y - 1].setEnabled(false);
+					}
+					if (arrMine[x - tempX][y + 1] != 0) {
+						btnMine[x - tempX][y + 1].setText(arrMine[x - tempX][y + 1] + "");
+						btnMine[x - tempX][y + 1].setEnabled(false);
+					}
+					leftCheck(x - tempX, y - 1);
+					rightCheck(x - tempX, y + 1);
+					break;
+				}
+			}
+		}
 
-	public class ThreadTimers implements Runnable {
+		public void downCheck(int x, int y) {
+			if (x == WIDTH_LENGTH) {
+				return;
+			}
+			System.out.println("down");
+			for (int tempX = 0; tempX <= WIDTH_LENGTH; tempX++) {
+				if ((x + tempX) == WIDTH_LENGTH) {
+					break;
+				} else if (arrMine[x + tempX][y] == 0) {
+					btnMine[x + tempX][y].setText("");
+					btnMine[x + tempX][y].setEnabled(false);
+					leftCheck(x + tempX, y - 1);
+					rightCheck(x + tempX, y + 1);
+				} else if (arrMine[x + tempX][y] != 0) {
+					btnMine[x + tempX][y].setText(arrMine[x + tempX][y] + "");
+					btnMine[x + tempX][y].setEnabled(false);
+					if (arrMine[x + tempX][y - 1] != 0) {
+						btnMine[x + tempX][y - 1].setText(arrMine[x + tempX][y - 1] + "");
+						btnMine[x + tempX][y - 1].setEnabled(false);
+					}
+					if (arrMine[x + tempX][y + 1] != 0) {
+						btnMine[x + tempX][y + 1].setText(arrMine[x + tempX][y + 1] + "");
+						btnMine[x + tempX][y + 1].setEnabled(false);
+					}
+					leftCheck(x + tempX, y - 1);
+					rightCheck(x + tempX, y + 1);
+					break;
+				}
+			}
+		}
 
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
+		public void leftCheck(int x, int y) {
+			if (y == 0) {
+				return;
+			}
+			System.out.println("left");
+			for (int tempY = 0; tempY <= y; tempY++) {
+				if ((y - tempY) == 0) {
+					break;
+				} else if (arrMine[x][y - tempY] == 0) {
+					btnMine[x][y - tempY].setText("");
+					btnMine[x][y - tempY].setEnabled(false);
+					upCheck(x - 1, y - tempY);
+					downCheck(x + 1, y - tempY);
+				} else if (arrMine[x][y - tempY] != 0) {
+					btnMine[x][y - tempY].setText(arrMine[x][y - tempY] + "");
+					btnMine[x][y - tempY].setEnabled(false);
+					if (arrMine[x - 1][y - tempY] != 0) {
+						btnMine[x - 1][y - tempY].setText(arrMine[x - 1][y - tempY] + "");
+						btnMine[x - 1][y - tempY].setEnabled(false);
+					}
+					if (arrMine[x + 1][y - tempY] != 0) {
+						btnMine[x + 1][y - tempY].setText(arrMine[x + 1][y - tempY] + "");
+						btnMine[x + 1][y - tempY].setEnabled(false);
+					}
+					upCheck(x - 1, y - tempY);
+					downCheck(x + 1, y - tempY);
+					break;
+				}
+			}
+		}
 
+		public void rightCheck(int x, int y) {
+			if (y == HEIGHT_LENGTH) {
+				return;
+			}
+			System.out.println("right");
+			for (int tempY = 0; tempY <= HEIGHT_LENGTH; tempY++) {
+				if ((y + tempY) == HEIGHT_LENGTH) {
+					break;
+				} else if (arrMine[x][y + tempY] == 0) {
+					btnMine[x][y + tempY].setText("");
+					btnMine[x][y + tempY].setEnabled(false);
+					upCheck(x - 1, y + tempY);
+					downCheck(x + 1, y + tempY);
+				} else if (arrMine[x][y + tempY] != 0) {
+					btnMine[x][y + tempY].setText(arrMine[x][y + tempY] + "");
+					btnMine[x][y + tempY].setEnabled(false);
+					if (arrMine[x - 1][y + tempY] != 0) {
+						btnMine[x - 1][y + tempY].setText(arrMine[x - 1][y + tempY] + "");
+						btnMine[x - 1][y + tempY].setEnabled(false);
+					}
+					if (arrMine[x + 1][y + tempY] != 0) {
+						btnMine[x + 1][y + tempY].setText(arrMine[x + 1][y + tempY] + "");
+						btnMine[x + 1][y + tempY].setEnabled(false);
+					}
+					upCheck(x - 1, y + tempY);
+					downCheck(x + 1, y + tempY);
+					break;
+				}
+			}
 		}
 	}
-	
+	//
+	// public class ThreadTimers implements Runnable {
+	//
+	// @Override
+	// public void run() {
+	// // TODO Auto-generated method stub
+	//
+	// }
+	// }
+
 	// imageResize
 	public ImageIcon reSize(String filePath) {
 		ImageIcon imageIcon = new ImageIcon(filePath);
 		Image image = imageIcon.getImage();
 		Image reSize = image.getScaledInstance(32, 32, 0);
-		
+
 		return (new ImageIcon(reSize));
 	}
 
